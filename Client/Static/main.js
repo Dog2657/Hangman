@@ -58,7 +58,7 @@ class Game{
 }
 
 //Load all catagorys
-fetch('/Words')
+fetch('/Words/Catagorys')
 .then(function(response) { return response.json(); })
 .then(function(json) {
     HTML_Menu.querySelector('form[data-Game-Type="Catagory"] select').innerHTML +=

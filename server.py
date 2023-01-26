@@ -38,6 +38,10 @@ def GET_Webpage():
 def GET_All_Words():
     return words
 
+@WordAPI.get("/Catagorys")
+def GET_All_Words():
+    return [catagory.get("Name") for catagory in words]
+
 @WordAPI.get("/Random")
 def GET_Random_Word():
     RCatagory = getRandom(words).get('Words')

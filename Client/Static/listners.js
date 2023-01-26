@@ -104,7 +104,7 @@ addEventListener("Game Finished", e => {
     Current_Game = null
     HTML_Menu.classList.add("Active")
     HTML_Status.setAttribute("data-Attemps-Left", "10")
-    HTML_Status.querySelector(img).src = "/Stages/0.png"
+    HTML_Status.querySelector('img').src = "/Stages/0.png"
 
     setTimeout(function() {
         HTML_Game.classList.remove("Active")
