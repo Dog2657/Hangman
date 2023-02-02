@@ -4,7 +4,7 @@ body {
   margin: 0;
 }
 
-.FancyButton, .Game .Keyboard .Gess_Word_BNT_Containor > button, .Menu form button {
+.FancyButton, .Game .Keyboard .Guess_Word_BNT_Containor > button, .Menu form button {
   background-color: rgba(var(--Colour, 0, 170, 255), 0.25);
   border: 1px solid rgb(var(--Colour, 0, 170, 255));
   font-weight: lighter;
@@ -19,7 +19,7 @@ body {
   color: white;
   outline: none;
 }
-.FancyButton:hover, .Game .Keyboard .Gess_Word_BNT_Containor > button:hover, .Menu form button:hover, .FancyButton:focus, .Game .Keyboard .Gess_Word_BNT_Containor > button:focus, .Menu form button:focus {
+.FancyButton:hover, .Game .Keyboard .Guess_Word_BNT_Containor > button:hover, .Menu form button:hover, .FancyButton:focus, .Game .Keyboard .Guess_Word_BNT_Containor > button:focus, .Menu form button:focus {
   background-color: rgba(var(--Colour, 0, 170, 255), 0.5);
 }
 
@@ -175,7 +175,7 @@ body {
   width: 100vw;
   padding: 5px;
 }
-.Game .Keyboard .Gess_Word_BNT_Containor > button {
+.Game .Keyboard .Guess_Word_BNT_Containor > button {
   --Colour: 0, 0, 0;
   font-size: 20px;
   margin: 5px 0;

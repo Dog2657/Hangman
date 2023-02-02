@@ -7,7 +7,7 @@ const Button_Exit = QL('.Game button.EndGame')
 const HTML_Status = QL('.Game .Status')
 const HTML_Word = QL('.Game .Word')
 const HTML_Keyboard = QL('.Game .Keyboard')
-const Button_Gess_Word = HTML_Keyboard.querySelector('.Gess_Word_BNT_Containor > button')
+const Button_Guess_Word = HTML_Keyboard.querySelector('.Guess_Word_BNT_Containor > button')
 
 class Game{
     remainingAttempts = 10;

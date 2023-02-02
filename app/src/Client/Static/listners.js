@@ -32,8 +32,8 @@ HTML_Keyboard.addEventListener("click", e => {
     useLetter(e.target.innerHTML.toLowerCase())
 })
 
-//Press Gess Word Button
-Button_Gess_Word.addEventListener("click", (e) => {
+//Press Guess Word Button
+Button_Guess_Word.addEventListener("click", (e) => {
     removeEventListener("keypress", physicalKeyClick)
     Swal.fire({
         title: "What's the word",
@@ -56,7 +56,7 @@ Button_Gess_Word.addEventListener("click", (e) => {
             HTML_Status.querySelector('img').src = `/Stages/${Math.abs(Current_Game.remainingAttempts - 10)}.png`
             Swal.fire({
                 icon: 'error',
-                title: 'You Gessed Wrong',
+                title: 'You Guessed Wrong',
             })
         }
     });

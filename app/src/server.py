@@ -5,17 +5,18 @@ from random import randrange
 from os import walk
 from re import sub
 
+cwd = "app/src/"
 app = FastAPI()
 WordAPI = FastAPI()
 
-app.mount("/Static", StaticFiles(directory="Client/Static", html=False), name="static")
-app.mount("/Stages", StaticFiles(directory="Stages", html=False), name="stages")
+app.mount("/Static", StaticFiles(directory=f"{cwd}/Client/Static", html=False), name="static")
+app.mount("/Stages", StaticFiles(directory=f"{cwd}/Stages", html=False), name="stages")
 
 app.mount("/Words", WordAPI)
 
 #  Load All Words into Memory  #
 words = []
-for (dirpath, dirnames, filenames) in walk('./Words'):
+for (dirpath, dirnames, filenames) in walk(f'{cwd}/Words'):
     for filename in filenames:
         with open(f"{dirpath}/{filename}", 'r') as data:
             words.append({
@@ -30,7 +31,7 @@ def getRandom(array):
 #   get Index.html   #
 @app.get("/")
 def GET_Webpage():
-    with open("Client/index.html") as File:
+    with open(f"{cwd}/Client/index.html") as File:
         return HTMLResponse(File.read())
 
 
