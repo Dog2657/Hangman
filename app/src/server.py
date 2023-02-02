@@ -20,7 +20,7 @@ for (dirpath, dirnames, filenames) in walk(f'{cwd}/Words'):
     for filename in filenames:
         with open(f"{dirpath}/{filename}", 'r') as data:
             words.append({
-                "Name": filename.rsplit('.', 1)[0].lower(),
+                "Name": filename.rsplit('.', 1)[0].lower().title(),
                 "Words": sub(' +', ' ', data.read()).split('\n')
             })
 
@@ -50,7 +50,7 @@ def GET_Random_Word():
 
 @WordAPI.get("/{CategoryName}")
 def GET_Catagory_Words(CategoryName):
-    data = [item for item in words if item.get("Name") == CategoryName.lower()]
+    data = [item for item in words if item.get("Name").lower() == CategoryName.lower()]
     if(data == []):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
