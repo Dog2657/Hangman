@@ -6,8 +6,8 @@ from os import walk
 from re import sub
 
 cwd = "app/src/"
-app = FastAPI()
-WordAPI = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None)
+WordAPI = FastAPI(docs_url=None, redoc_url=None)
 
 app.mount("/Static", StaticFiles(directory=f"{cwd}/Client/Static", html=False), name="static")
 app.mount("/Stages", StaticFiles(directory=f"{cwd}/Stages", html=False), name="stages")
