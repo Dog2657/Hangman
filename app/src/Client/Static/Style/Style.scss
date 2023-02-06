@@ -91,6 +91,10 @@ body{
         button{
             @extend .FancyButton
         }
+
+        select option {
+            background-color: #242424;
+        }
     }
 
     .By{

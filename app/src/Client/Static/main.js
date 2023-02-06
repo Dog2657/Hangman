@@ -62,7 +62,7 @@ fetch('/Words/Catagorys')
 .then(function(response) { return response.json(); })
 .then(function(json) {
     HTML_Menu.querySelector('form[data-Game-Type="Catagory"] select').innerHTML +=
-    json.map(data => {return `<option value="${data}">${data}</option>`})
+    json.map(data => {return `<option value="${data}">${data}</option>`}).join('')
 });
 
 
