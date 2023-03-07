@@ -14,9 +14,11 @@ jobs:
         uses: fifsky/ssh-action@v0.0.6
         with:
             command: |
-                    cd /root/ 
-                    ls -a          
-                    # ADD MORE COMMANDS HERE OR REPLACE ABOVE
+                    cd /root/Hangman
+                    git pull
+                    git status
+                    docker-compose up --build -d
+                    
             host: ${{ secrets.DEPLOY_SSH_HOST }}
             user: ${{ secrets.DEPLOY_SSH_USER }}
             key:  ${{ secrets.DEPLOY_SSH_KEY }}
