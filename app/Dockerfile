@@ -1,15 +1,16 @@
-From python:3.10
+#FROM node:14-alpine AS build
+#WORKDIR /app/src/client
+#COPY package*.json ./
+#RUN npm install
+#COPY . ./
+#RUN npm run build
 
-Run apt-get -y update
-
-Copy requirements.txt .
-
-Run pip install -r ./requirements.txt
-
-Expose 80
-
-Add . .
-
-WorkDIR .
-
-CMD ["uvicorn", "app.src.server:app", "--host", "0.0.0.0", "--port","80"]
+FROM python:3.10
+COPY --from=build /app/dist app/src/client
+RUN apt-get -y update
+COPY requirements.txt .
+RUN pip install -r ./requirements.txt
+EXPOSE 8080
+ADD . .
+WORKDIR .
+CMD ["uvicorn", "app.src.server:app", "--host", "0.0.0.0", "--port","8080"]
