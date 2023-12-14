@@ -2,10 +2,12 @@
   import svelteLogo from './assets/svelte.svg'
   import viteLogo from '/vite.svg'
 
+  import stage1 from '/stages/0.png'
+
   import Game from './components/Game.svelte';
 </script>
 
-
+<img src={stage1} alt="">
 
 
 
