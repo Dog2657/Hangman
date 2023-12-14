@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Depends, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from random import randrange
@@ -7,6 +8,14 @@ import os
 
 #docs_url=None
 app = FastAPI(redoc_url=None)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[ "http://localhost:5173" ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 catagorys = {}
@@ -39,7 +48,8 @@ def getCatagory(catagory: str):
 
 
 @app.get("/word-catagorys", summary="Returns a list of all catagorys")
-async def GET_All_Catagorys() -> list:
+async def GET_All_Catagorys(request: Request) -> list:
+    print(request.client.host)
     return list(catagorys.keys())
 
 @app.get("/catagory-words/{catagory}")
@@ -82,5 +92,5 @@ class fileManager(StaticFiles):
 
         return await super().get_response(request, path)
 
-
-app.mount("/", fileManager())
+if(os.path.isdir(f"{cwd}/client")):
+    app.mount("/", fileManager())
