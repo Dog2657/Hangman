@@ -1,0 +1,17 @@
+@mixin FancyButton($color){
+    background-color: rgba($color, .25);
+    border: 1px solid rgb($color);
+    font-weight: lighter;
+    border-radius: .25em;
+    width: max-content;
+    padding: .5em 1em;
+    font-size: 1.5rem;
+    padding: 5px 20px;
+    cursor: pointer;
+    color: white;
+    outline: none;
+
+    &:hover, &:focus{
+        background-color: rgba($color, 0.50);
+    }
+}
