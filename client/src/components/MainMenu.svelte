@@ -1,11 +1,14 @@
 <script>
     import Loader from "./Loader.svelte";
+    import { fade } from 'svelte/transition';
 
     import { getEventTarget, generateNumberFromRange } from "../lib/general";
     import { catagorys, words } from "../lib/words"
+    import { gameStatus } from '../lib/gameStatus'
     
     async function playCustomWord(e){
         const value = getEventTarget(e).querySelector("input")?.value || ""
+        gameStatus.start(value)
     }
 
     async function playCatagoryWord(e){
@@ -13,7 +16,7 @@
         const catWords = await words[value]
         const index = generateNumberFromRange(catWords.length -1)
 
-        console.log(catWords[index])
+        gameStatus.start(catWords[index], value)
     }
 
     async function playRandomWord(){
@@ -24,10 +27,11 @@
         const catWords = await words[cat]
         const wordsIndex = generateNumberFromRange(catWords.length -1)
 
-        console.log(catWords[wordsIndex])
+        gameStatus.start(catWords[wordsIndex], cat)
     }
 </script>
-<main>
+
+<main transition:fade={($gameStatus?.finished)? {duration: 500, delay: 200} : {duration: 200}}>
     <section>
         <h1>HangMan</h1>
         <div>
