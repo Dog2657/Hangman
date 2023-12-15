@@ -110,6 +110,7 @@
                     align-items: center;
                     font-size: 15px;
                     display: flex;
+                    height: 41px;
                     width: 300px;
                     opacity: 1;
 

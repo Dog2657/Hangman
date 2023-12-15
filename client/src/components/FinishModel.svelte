@@ -26,38 +26,37 @@
     }
 </script>
 
-<div class="finish-model" transition:fade={{duration: 200}}>
-    <section> 
-        <h1>
-            {#if $gameStatus.validChars.size <= 0}
-                You Win
-            {:else}
-                You Lose
-            {/if}
-        </h1>
-        <section class="word">
-            <div>Your Word</div>
-            <div>{$gameStatus.word}</div>
-            {#if $gameStatus.catagory}
-                <div>{$gameStatus.catagory}</div>
-            {/if}
+{#if $gameStatus}
+    <div class="finish-model" transition:fade={{duration: 200}}>
+        <section> 
+            <h1>
+                {#if $gameStatus.validChars.size <= 0}
+                    You Win
+                {:else}
+                    You Lose
+                {/if}
+            </h1>
+            <section class="word">
+                <div>Your Word</div>
+                <div>{$gameStatus.word}</div>
+                {#if $gameStatus.catagory}
+                    <div>{$gameStatus.catagory}</div>
+                {/if}
+            </section>
+
+            <section class="details">
+                <div>Time</div>
+                <div>{calculateDuration()}</div>
+                {#if $gameStatus.validChars.size <= 0}
+                    <div>Wrong gesses</div>
+                    <div>{10 - $gameStatus.remainingAttempts}</div>
+                {/if}
+            </section>
+
+            <button on:click={() => {gameStatus.end()}}>Continue</button>
         </section>
-
-        <section>
-            <span>Wrong attempts</span>
-            <span>{10 - $gameStatus.remainingAttempts}</span>
-        </section>
-
-        <section>
-            <span>Time</span>
-            <span>{calculateDuration()}</span>
-        </section>
-
-        <button on:click={() => {gameStatus.end()}}>Continue</button>
-        
-    </section>
-</div>
-
+    </div>
+{/if}
 
 <style lang="scss">
     div.finish-model{
@@ -87,21 +86,74 @@
                 border-radius: 20px;
             }
 
-            & > section.word{
-                background-color: rgba(240, 248, 255, 0.7);
-                padding: 10px;
-                color: black;
-                border-radius: 10px;
-                min-height: 50px;
-                margin: 10px;
+            & > h1{
+                margin: 0;
             }
 
+            & > section.word{
+                background-color: rgba(148, 187, 221, 0.7);
+                border-radius: 10px;
+                min-height: 50px;
+                padding: 10px;
+                color: black;
+                margin: 10px;
+
+                & > *:nth-child(1){
+                    font-size: 20px;
+                }
+                & > *:nth-child(2){
+                    font-size: 30px;
+                    text-transform: capitalize;
+                    font-weight: bold;
+                    margin: 0;
+
+                    &::before, &::after{
+                        content: '"';
+                        font-weight: normal;
+                    }
+                }
+                & > *:nth-child(3){
+                    font-style: italic;
+                    line-height: 10px;
+                }
+            }
+
+           
+            & > section.details{
+                display: grid; 
+                grid-auto-columns: 1fr; 
+                grid-auto-rows: 1fr; 
+                grid-template-columns: 1fr 1fr; 
+                grid-template-rows: 1fr 1fr; 
+                align-items: center;
+                justify-content: center;
+                gap: 0px 10px; 
+                grid-template-areas: 
+                    "Time TimeValue"
+                    "Attemps AttempsValue"; 
+
+                & > div:is(:nth-child(1), :nth-child(3)){
+                    text-align: right;
+                }
+                & > div:is(:nth-child(2), :nth-child(4)){
+                    text-align: left;
+                }
+
+                & > div:nth-child(1){ grid-area: Time; }
+                & > div:nth-child(2){ grid-area: TimeValue; }
+                & > div:nth-child(3){ grid-area: Attemps; }
+                & > div:nth-child(4){ grid-area: AttempsValue; }
+            }
+
+
             & > button{
+                margin-top: 20px;
                 background-color: rgb(168, 63, 63);
                 outline: transparent;
                 padding: 10px 20px;
                 border-radius: 10px;
                 cursor: pointer;
+                width: 80%;
                 font-size: 15px;
                 border: none;
             }
