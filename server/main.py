@@ -31,7 +31,7 @@ async def startup():
             for line in file.readlines():
                 line = line.strip().replace('\n', "")
                 if(line != ""):
-                    words.append(line)
+                    words.append(line.lower())
     
             catagorys[filename.split('.')[0]] = words
 
@@ -48,8 +48,7 @@ def getCatagory(catagory: str):
 
 
 @app.get("/word-catagorys", summary="Returns a list of all catagorys")
-async def GET_All_Catagorys(request: Request) -> list:
-    print(request.client.host)
+async def GET_All_Catagorys() -> list:
     return list(catagorys.keys())
 
 @app.get("/catagory-words/{catagory}")
