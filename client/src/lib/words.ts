@@ -16,3 +16,11 @@ catagorys.then(cats => {
         })
     });
 })
+
+export async function removeWordByIndex(catagory: string, index: number){
+    (await words[catagory]).splice(index, 1)
+}
+
+export async function addWord(catagory: string, word: string) {
+    (await words[catagory]).unshift(word)
+}

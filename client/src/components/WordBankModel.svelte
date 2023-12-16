@@ -1,31 +1,69 @@
 <script lang="ts">
     import Loader from "./Loader.svelte";
+    import Icon from "./Icon.svelte";
 
+    import { catagorys, words, removeWordByIndex, addWord as addWordToCatagory } from "../lib/words"
     import { getEventTarget } from "../lib/general"
-    import { catagorys, words } from "../lib/words"
     import { fade } from 'svelte/transition';
     import { onMount } from "svelte";
 
     let display: boolean = false
     let selectedCatagory: string
 
-    onMount(async () => {
-        selectedCatagory = (await catagorys)[0]
-    });
+    let wordBank: Promise<Array<string>>
+
+    $: {
+        //@ts-ignore
+        wordBank = new Promise<void>(async(resolve, reject) => {
+            const wordCatagorys = await words
+            //@ts-ignore
+            resolve(await wordCatagorys[selectedCatagory])
+        })
+    }
+
+    onMount(async () => { selectedCatagory = (await catagorys)[0] });
+
+    function refreshWordBank(){
+        //@ts-ignore
+        wordBank = new Promise<void>(async(resolve, reject) => {
+            const wordCatagorys = await words
+            //@ts-ignore
+            resolve(await wordCatagorys[selectedCatagory])
+        })
+    }
 
     export function open(){
         display = true
     }
 
-    function addWord(e){
-        const word = getEventTarget(e).querySelector("input")?.value
-        console.log(word)
+    async function addWord(e){
+        const word = getEventTarget(e).querySelector("input")?.value || ""
+
+        if((await words[selectedCatagory]).includes(word))
+            return;
+
+        addWordToCatagory(selectedCatagory, word)
+        refreshWordBank()
+
+        //@ts-ignore
+        getEventTarget(e).querySelector("input").value = ""
+    }
+
+    async function removeWord(index: number){
+        removeWordByIndex(selectedCatagory, index)
+        refreshWordBank()
     }
 </script>
 
 {#if display}
     <div class="word-bank-model" in:fade={{duration: 200}} out:fade={{duration: 300}}>
         <article>
+            <header>
+                <button on:click={() => {display = false}}>
+                    <Icon name="cross" width={20} height={20}/>
+                </button>
+                <h2>Words</h2>
+            </header>
             <section class="catagory-selector">
                 {#await catagorys}
                     <Loader/>
@@ -46,16 +84,27 @@
                 <input type="text" required placeholder="">
                 <div>E.g. Animals or planets</div>
                 <button type="submit">
-                    <svg width="15" height="15" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_267_2)">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.73448 49.93C1.68598 48.0572 2.32907 46.1677 3.66375 44.7384L43.5771 1.99455C46.1529 -0.763866 50.329 -0.763872 52.9047 1.99455C55.4805 4.75296 55.4805 9.22524 52.9047 11.9837L23.3405 43.6445H85.8246V18.2831C85.8246 15.5217 88.0632 13.2831 90.8246 13.2831H95C97.7615 13.2831 100 15.5217 100 18.2831V51.9276C100 51.9354 100 51.9432 100 51.9509V53.8252C100 56.5866 97.7614 58.8252 95 58.8252H25.7855L52.905 87.8678C55.4807 90.6262 55.4807 95.0985 52.905 97.8569C50.3292 100.615 46.1531 100.615 43.5773 97.8569L3.66397 55.1131C2.3313 53.6859 1.68813 51.8 1.73448 49.93Z" fill="#D9D9D9"/>
-                        </g>
-                    </svg>
+                    <Icon name="enter" width={15} height={15}/>
                 </button>
             </form>
 
             <section class="words">
-               
+                {#await wordBank}
+                        <Loader/>
+                {:then words} 
+                    <table>
+                        {#each words as word, index}
+                            <tr>
+                                <td>
+                                    <button on:click={() => {removeWord(index)}}>
+                                        <Icon name="cross" width={10} height={10}/>
+                                    </button>
+                                </td>
+                                <td>{word}</td>
+                            </tr>
+                        {/each}
+                    </table>
+               {/await}
             </section>
         </article>
     </div>
@@ -70,20 +119,60 @@
     
         & > article{
             max-height: 100vh;
+            overflow-y: scroll;
 
             @media (width > $mobile-size) {
                 display: grid; 
                 grid-auto-columns: 1fr; 
                 grid-auto-rows: 1fr; 
                 grid-template-columns: 0.5fr 1.5fr; 
-                grid-template-rows: 0.2fr 1.8fr; 
+                grid-template-rows: max-content 0.2fr 1.8fr; 
                 gap: 0px 10px; 
                 grid-template-areas: 
+                    "Header Header"
                     "Catagorys New-enterys"
                     "Catagorys Words"; 
             }
 
+            @media (width <= $mobile-size) {
+                display: flex;
+                flex-direction: column;
+            }
 
+            & > header{
+                grid-area: Header;
+                display: grid; 
+                grid-auto-columns: 1fr; 
+                grid-auto-rows: 1fr; 
+                grid-template-columns: 35px 1fr 35px; 
+                grid-template-rows: 1fr; 
+                gap: 0px 10px; 
+                grid-template-areas: 
+                    "Button Title ."; 
+                margin-bottom: 10px;
+
+                & > button{
+                    grid-area: Button;
+                    transition: all 200ms ease;
+                    color: white;
+                    border: none;
+                    outline: 1px solid white;
+                    border-radius: 10px;
+                    cursor: pointer;
+
+                    &:hover, &:active{
+                        opacity: .7;
+                        color: red;
+                        outline-color: red;
+                    }
+                }
+
+                & > h2{
+                    text-align: center;
+                    grid-area: Title;
+                    margin: 0;
+                }
+            }
         
             & > section.catagory-selector{
                 grid-area: Catagorys;
@@ -158,6 +247,7 @@
                 border-radius: 5px;
                 padding: $padding;
                 display: flex;
+                margin-bottom: 20px;
 
                 & > input:is(:focus, :focus-within, :not(:placeholder-shown)) + div{
                     transition: all 150ms ease-in;
@@ -198,7 +288,48 @@
                 }
             }
 
-            & > section.words { grid-area: Words; }
+            & > section.words {
+                grid-area: Words;
+                flex-grow: 1;
+                overflow-y: scroll;
+                min-height: 100px;
+                max-height: 100%;
+
+                &:has(.loader){
+                    display: grid;
+                    place-items: center;
+                }
+
+                & > table{
+                    table-layout:fixed;
+                    width:100%;
+
+                    & > tr{
+                        &:hover > td:nth-child(1) > button{ color: red }
+
+                        & > td:nth-child(1){
+                            width: max-content;
+                            padding-right: 2.5px;
+                            & > button{
+                                cursor: pointer;
+                                background: none;
+                                color: rgb(183, 34, 34);
+                                outline: transparent;
+                                border: none;
+
+                                &:active, &:hover{
+                                    color: red
+                                }
+                            }
+                        }
+
+                        & > td:nth-child(2){
+                            word-break: break-all;
+                            padding-left: 2.5px;
+                        }
+                    }
+                }
+            }
         }
     }
 </style>
