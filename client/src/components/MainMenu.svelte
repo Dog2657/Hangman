@@ -1,11 +1,19 @@
 <script lang="ts">
-    import Loader from "./Loader.svelte";
+    
     import WordBankModel from "./WordBankModel.svelte";
+
+
+
+
+
+
+
     
     import { getEventTarget, generateNumberFromRange } from "../lib/general";
-    import { catagorys, words } from "../lib/words"
+    
     import { gameStatus } from '../lib/gameStatus'
     import { fade } from 'svelte/transition';
+    import CatagoryLoader from "./CatagoryLoader.svelte";
 
     let openWordBankModel: () => void
     
@@ -15,22 +23,22 @@
     }
 
     async function playCatagoryWord(e){
-        const value = getEventTarget(e).querySelector("select")?.value || ""
+        /*const value = getEventTarget(e).querySelector("select")?.value || ""
         const catWords = await words[value]
         const index = generateNumberFromRange(catWords.length -1)
 
-        gameStatus.start(catWords[index], value)
+        gameStatus.start(catWords[index], value)*/
     }
 
     async function playRandomWord(){
-        const cats = await catagorys
+        /*const cats = await catagorys
         const catIndex = generateNumberFromRange(cats.length -1)
         const cat = cats[catIndex]
 
         const catWords = await words[cat]
         const wordsIndex = generateNumberFromRange(catWords.length -1)
 
-        gameStatus.start(catWords[wordsIndex], cat)
+        gameStatus.start(catWords[wordsIndex], cat)*/
     }
 </script>
 
@@ -43,18 +51,14 @@
                 <button>Play</button>
             </form>
             <form on:submit|preventDefault={playCatagoryWord}>
-                {#await catagorys}
-                    <div>
-                        <Loader/>
-                    </div>
-                {:then data}
+                <CatagoryLoader validate={true} let:categories>
                     <select>
-                        {#each data as catagory}
+                        {#each categories as catagory}
                             <option>{catagory}</option>
                         {/each}
                     </select>
                     <button>Play</button>
-                {/await}
+                </CatagoryLoader>
             </form>
             <form on:submit|preventDefault={playRandomWord}>
                 <div>Random</div>
