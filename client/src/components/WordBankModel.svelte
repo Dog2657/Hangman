@@ -2,42 +2,32 @@
     import Loader from "./Loader.svelte";
     import Icon from "./Icon.svelte";
 
-    import { catagorys, words, removeWordByIndex, addWord as addWordToCatagory } from "../lib/words"
-    import { getEventTarget } from "../lib/general"
+    import { words } from "../lib/words"
     import { fade } from 'svelte/transition';
     import { onMount } from "svelte";
+    import CatagoryLoader from "./CatagoryLoader.svelte";
+    import { get } from "svelte/store";
 
     let display: boolean = false
+
     let selectedCatagory: string
+    $: catagoryWords = new Promise<Set<String>>(async (resolve, reject) => {
+        const instace = await $words
+        const catagoryWords = await instace[selectedCatagory]
+        resolve(catagoryWords || [])
+    })
 
-    let wordBank: Promise<Array<string>>
 
-    $: {
-        //@ts-ignore
-        wordBank = new Promise<void>(async(resolve, reject) => {
-            const wordCatagorys = await words
-            //@ts-ignore
-            resolve(await wordCatagorys[selectedCatagory])
-        })
-    }
 
-    onMount(async () => { selectedCatagory = (await catagorys)[0] });
+    onMount(async () => { selectedCatagory = Object.keys(await get(words))[0] });
 
-    function refreshWordBank(){
-        //@ts-ignore
-        wordBank = new Promise<void>(async(resolve, reject) => {
-            const wordCatagorys = await words
-            //@ts-ignore
-            resolve(await wordCatagorys[selectedCatagory])
-        })
-    }
 
     export function open(){
         display = true
     }
 
     async function addWord(e){
-        const word = getEventTarget(e).querySelector("input")?.value || ""
+        /*const word = getEventTarget(e).querySelector("input")?.value.toLowerCase() || ""
 
         if((await words[selectedCatagory]).includes(word))
             return;
@@ -46,12 +36,12 @@
         refreshWordBank()
 
         //@ts-ignore
-        getEventTarget(e).querySelector("input").value = ""
+        getEventTarget(e).querySelector("input").value = ""*/
     }
 
-    async function removeWord(index: number){
-        removeWordByIndex(selectedCatagory, index)
-        refreshWordBank()
+    async function removeWord(word: string){
+        /*removeWordFromCatagory(selectedCatagory, word)
+        refreshWordBank()*/
     }
 </script>
 
@@ -65,19 +55,16 @@
                 <h2>Words</h2>
             </header>
             <section class="catagory-selector">
-                {#await catagorys}
-                    <Loader/>
-                {:then data}
+                <CatagoryLoader let:categories>
                     <select bind:value={selectedCatagory}>
-                        {#each data as catagory}
+                        {#each categories as catagory}
                             <option>{catagory}</option>
                         {/each}
                     </select>
-
-                    {#each data as catagory}
-                        <button class:selected={ selectedCatagory == catagory } on:click={() => {selectedCatagory = catagory}}>{catagory}</button>
+                    {#each categories as catagory}
+                        <button class:selected={catagory === selectedCatagory}>{catagory}</button>
                     {/each}
-                {/await}
+                </CatagoryLoader>
             </section>
 
             <form class="entry-inputer" on:submit|preventDefault={addWord}>
@@ -89,14 +76,14 @@
             </form>
 
             <section class="words">
-                {#await wordBank}
-                        <Loader/>
+                {#await catagoryWords}
+                    <Loader/>
                 {:then words} 
                     <table>
-                        {#each words as word, index}
+                        {#each words as word}
                             <tr>
                                 <td>
-                                    <button on:click={() => {removeWord(index)}}>
+                                    <button on:click={() => {removeWord(word)}}>
                                         <Icon name="cross" width={10} height={10}/>
                                     </button>
                                 </td>
@@ -104,7 +91,7 @@
                             </tr>
                         {/each}
                     </table>
-               {/await}
+                {/await}
             </section>
         </article>
     </div>
