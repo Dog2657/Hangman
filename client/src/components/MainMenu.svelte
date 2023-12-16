@@ -1,10 +1,13 @@
-<script>
+<script lang="ts">
     import Loader from "./Loader.svelte";
-    import { fade } from 'svelte/transition';
-
+    import WordBankModel from "./WordBankModel.svelte";
+    
     import { getEventTarget, generateNumberFromRange } from "../lib/general";
     import { catagorys, words } from "../lib/words"
     import { gameStatus } from '../lib/gameStatus'
+    import { fade } from 'svelte/transition';
+
+    let openWordBankModel: () => void
     
     async function playCustomWord(e){
         const value = getEventTarget(e).querySelector("input")?.value || ""
@@ -58,11 +61,13 @@
                 <button>Play</button>
             </form>
             <div class="devider"></div>
-            <button class="word-bank">Word Bank</button>
+            <button on:click={openWordBankModel} class="word-bank">Word Bank</button>
         </div>
     </section>
     <a class="credit" target="_blank" href="https://github.com/Dog2657/Hangman">Made by Dog2657</a>
 </main>
+
+<WordBankModel bind:open={openWordBankModel}/>
 
 <style lang="scss">
     @import '../assets/veriables.scss';

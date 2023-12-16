@@ -20,6 +20,10 @@ body{
   height: 100vh;
 }
 
+body:has( div.word-bank-model ){
+  overflow: hidden;
+}
+
 #app {
   width: 100%;
   height: 100%;
