@@ -15,3 +15,28 @@
         background-color: rgba($color, 0.50);
     }
 }
+
+@mixin CustomModel($size: 500px, $background: #343040, $backdrop: rgba(0, 0, 0, 0.13)){
+    background-color: $backdrop;
+    place-items: center;
+    position: absolute;
+    height: 100vh;
+    display: grid;
+    width: 100vw;
+    left: 0;
+    top: 0;
+
+    & > *:first-child{
+        box-shadow: 0px 0px 300px 5px $background; 
+        background-color: $background;
+        box-sizing: border-box;
+        max-width: 100vw;
+        padding: 30px;
+        width: $size;
+        border: none;
+
+        @media (width > $size) {
+            border-radius: 10px;
+        }
+    }
+}
