@@ -79,6 +79,8 @@
                     flex-direction: column;
                     gap: 10px;
                     overflow-y: scroll;
+                    border-right: 1px solid white;
+                    padding-right: 10px;
                 }
                 
 
@@ -90,15 +92,42 @@
                 }
 
                 & > button{
-                    @media (width <= $mobile-size) {
-                        display: none;
+                    @media (width <= $mobile-size) { display: none; }
+
+                    &:not(.selected){ font-weight: lighter; }
+                    &:not(:is(:hover, :active)){ color: white; }
+                    &:hover, &:active{
+                        transition: color 200ms ease-in;
+                        color: orangered;
                     }
+
+                    transition: color 400ms ease-out;
+                    outline: transparent;
+                    width: max-content;
+                    background: none;
+                    text-align: left;
+                    cursor: pointer;
+                    max-width: 100%;
+                    cursor: pointer;
+                    border: none;
                 }
 
                 & > select{
-                    @media (width > $mobile-size) {
-                        display: none;
+                    @media (width > $mobile-size) { display: none; }
+                    &:not(:is(:hover, :active)){ outline-color: white; }
+                    &:is(:hover, :active){
+                        transition: outline 200ms ease-in;
+                        outline-color: orangered;
                     }
+
+                    transition: outline 400ms ease-out;
+                    background: none;
+                    outline-style: solid;
+                    outline-width: 1px;
+                    width: 100%;
+                    border: none;
+                    height: 40px;
+                    border-radius: 10px;
                 }
             }
             & > form.entry-inputer { grid-area: New-enterys; }

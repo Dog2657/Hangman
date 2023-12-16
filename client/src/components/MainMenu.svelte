@@ -131,7 +131,8 @@
                     }
 
                     & > button{
-                        @include FancyButton(var(--Colour))
+                        @include FancyButton(var(--Colour));
+                        font-size: 1.5rem;
                     }
                 }
 
