@@ -10,7 +10,6 @@
         return new Promise<Array<string>>(async (resolve, reject) => {
             const catagories = await get(words) 
             const names = Object.keys(catagories)
-
             if(!validate)
                 return resolve(names)
 
@@ -18,7 +17,7 @@
             const validCategories: Array<string> = []
 
             wordPromises.forEach((value, index) => {
-                if(value.length > 0)
+                if(value.size > 0)
                     validCategories.push(names[index])
             })
 
