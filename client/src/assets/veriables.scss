@@ -19,12 +19,8 @@
 @mixin CustomModel($size: 500px, $background: #343040, $backdrop: rgba(0, 0, 0, 0.13)){
     background-color: $backdrop;
     place-items: center;
-<<<<<<< Updated upstream
-    position: absolute;
-=======
     max-height: 100vh;
     position: fixed;
->>>>>>> Stashed changes
     height: 100vh;
     display: grid;
     width: 100vw;
@@ -32,7 +28,6 @@
     top: 0;
 
     & > *:first-child{
-<<<<<<< Updated upstream
         box-shadow: 0px 0px 300px 5px $background; 
         background-color: $background;
         box-sizing: border-box;
@@ -44,16 +39,5 @@
         @media (width > $size) {
             border-radius: 10px;
         }
-=======
-        @media (width > $size) { border-radius: 10px; }
-
-        box-shadow: 0px 0px 300px 5px $background; 
-        background-color: $background;
-        box-sizing: border-box;
-        padding: 30px;
-        width: $size;
-        max-width: 100vw;
-        border: none;
->>>>>>> Stashed changes
     }
 }
