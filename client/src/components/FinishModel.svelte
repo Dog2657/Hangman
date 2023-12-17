@@ -40,7 +40,12 @@
                 <div>Your Word</div>
                 <div>{$gameStatus.word}</div>
                 {#if $gameStatus.catagory}
-                    <div>{$gameStatus.catagory}</div>
+                    <div>
+                        {$gameStatus.catagory}
+                        {#if $gameStatus.customCatagory}
+                            (<i>Custom</i>)
+                        {/if}
+                    </div>
                 {/if}
             </section>
 
