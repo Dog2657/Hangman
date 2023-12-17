@@ -70,6 +70,9 @@ export async function addWord(catagory: string, word: string){
 
     if(subtractive[catagory] != undefined && subtractive[catagory].has(word)){
         subtractive[catagory].delete(word)
+        if(subtractive[catagory].size <= 0)
+            delete subtractive[catagory]
+
         saveLocalStorageJSON("subtractiveWords", dumpAlteration(subtractive))
         return
     }
@@ -95,6 +98,10 @@ export async function deleteWord(catagory: string, word: string) {
 
     if(additive[catagory] != undefined && additive[catagory].has(word)){
         additive[catagory].delete(word)
+        if(additive[catagory].size <= 0)
+            delete additive[catagory]
+
+        
         saveLocalStorageJSON("additiveWords", dumpAlteration(additive))
         return
     }
