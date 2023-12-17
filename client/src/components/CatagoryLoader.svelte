@@ -3,6 +3,7 @@
 
     import { words } from "../lib/words"
     import { get } from 'svelte/store';
+    import { toTitleCase } from "../lib/general";
     
     export let validate = false
 
@@ -18,7 +19,7 @@
 
             wordPromises.forEach((value, index) => {
                 if(value.size > 0)
-                    validCategories.push(names[index].toTitleCase())
+                    validCategories.push( toTitleCase(names[index]) )
             })
 
             resolve(validCategories)

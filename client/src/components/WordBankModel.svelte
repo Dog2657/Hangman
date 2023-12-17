@@ -1,14 +1,14 @@
 <script lang="ts">
     import CatagoryLoader from "./CatagoryLoader.svelte";
+    import EntryInput from "./EntryInput.svelte";
     import Loader from "./Loader.svelte";
     import Icon from "./Icon.svelte";
 
-    import { words, addWord, deleteWord } from "../lib/words"
-    import { getEventTarget } from "../lib/general";
+    import { words, addWord, deleteWord, addCatagory, deleteCatagory } from "../lib/words"
     import { fade } from 'svelte/transition';
     import { get } from "svelte/store";
     import { onMount } from "svelte";
-    import EntryInput from "./EntryInput.svelte";
+    import { toTitleCase } from "../lib/general";
 
     let display: number = -1
 
@@ -36,7 +36,19 @@
     }
 
     async function handelNewCatagory(value: string, success: () => void, error: () => void) {
-        console.log(value)
+        const catagories = await get(words) 
+        if(catagories[value] !== undefined)
+            return error()
+
+        addCatagory(value.toLowerCase())
+        success()
+    }
+
+    function confirmDeletion(name: string){
+        if(!confirm(`Are you sure you want to delete "${ toTitleCase(name) }"`))
+            return
+
+        deleteCatagory(name)
     }
 </script>
 
@@ -54,11 +66,11 @@
                     <CatagoryLoader let:categories>
                         <select bind:value={selectedCatagory}>
                             {#each categories as catagory}
-                                <option>{catagory}</option>
+                                <option>{toTitleCase(catagory)}</option>
                             {/each}
                         </select>
                         {#each categories as catagory}
-                            <button class:selected={catagory === selectedCatagory} on:click={() => { selectedCatagory = catagory }}>{catagory}</button>
+                            <button class:selected={catagory === selectedCatagory} on:click={() => { selectedCatagory = catagory }}>{toTitleCase(catagory)}</button>
                         {/each}
                     </CatagoryLoader>
                     <button class="catagory-modify" on:click={() => {display = 1}}>
@@ -97,7 +109,7 @@
                 <CatagoryLoader let:categories>
                     <section>
                         {#each categories as catagory}
-                            <button on:click={() => {  }}>{catagory}</button>
+                            <button on:click={() => { confirmDeletion(catagory) }}>{toTitleCase(catagory)}</button>
                         {/each}
                     </section>
                 </CatagoryLoader>
@@ -173,7 +185,7 @@
                 display: flex;
                 flex-direction: column;
             }
-            
+
             & > section.catagory-selector{
                 grid-area: Catagorys;
                 display: flex;
@@ -297,7 +309,37 @@
         }
 
         & > section.catagory{
+            flex-direction: column;
+            max-height: 100vh;
+            display: flex;
 
+            & > section{
+                flex-direction: column;
+                align-items: center;
+                overflow-y: scroll;
+                padding: 10px 5px;
+                display: flex;
+                flex-grow: 1;
+                gap: 15px;
+
+                & > button{
+                    background-color: rgba(48, 64, 92, 0.251);
+                    outline: 1px solid rgba(255, 255, 255, 0.5);
+                    transition: all 400ms ease-out;
+                    box-sizing: border-box;
+                    border-radius: 20px;
+                    cursor: pointer;
+                    padding: 10px;
+                    border: none;
+                    width: 100%;
+
+                    &:hover{
+                        transition: all 200ms ease-in;
+                        text-decoration: line-through;
+                        opacity: .7;
+                    }
+                }
+            }
         }
     }
 </style>
