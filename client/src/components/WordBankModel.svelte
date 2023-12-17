@@ -88,7 +88,10 @@
                             {#each words as word}
                                 <tr>
                                     <td>
-                                        <button on:click={() => {deleteWord(selectedCatagory, word)}}>
+                                        <button on:click={() => {
+                                            //@ts-ignore
+                                            deleteWord(selectedCatagory, word)
+                                        }}>
                                             <Icon name="cross" width={10} height={10}/>
                                         </button>
                                     </td>

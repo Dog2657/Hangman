@@ -4,7 +4,7 @@ import { get, writable } from 'svelte/store';
 
 const globalWords = request("word-catagorys")
 
-function parseAlteration(data: Record<string, Array<string> | boolean>){
+function parseAlteration(data: Record<string, Array<string>>){
     const output: Record<string, Set<string> | boolean> = {}
     Object.keys(data).forEach(key => {
         if(typeof data[key] == 'boolean')
@@ -27,12 +27,14 @@ function dumpAlteration(data: Record<string, Set<string>>){
 }
 
 
-function getWordAlterations(): {additive: Record<string, Set<string> | boolean>, subtractive: Record<string, Set<string> | boolean>}{
+function getWordAlterations(): {additive: Record<string, Set<string>>, subtractive: Record<string, Set<string>>}{
     const additive = getLocalStorageJSON("additiveWords") || {}
     const subtractive = getLocalStorageJSON("subtractiveWords") || {}
     
     return {
+        //@ts-ignore
         additive: parseAlteration(additive),
+        //@ts-ignore
         subtractive: parseAlteration(subtractive)
     }
 }
@@ -145,8 +147,6 @@ export async function addCatagory(name: string){
 
     instance[name] = getCatagoryWords(name, additive[name], subtractive[name])
     words.set(Promise.resolve(instance))
-
-    
 }
 
 export async function deleteCatagory(name: string){
@@ -161,6 +161,7 @@ export async function deleteCatagory(name: string){
         delete additive[name]
         saveLocalStorageJSON("additiveWords", dumpAlteration(additive))
     }else{
+        //@ts-ignore
         subtractive[name] = true
         saveLocalStorageJSON("subtractiveWords", dumpAlteration(subtractive))
     }

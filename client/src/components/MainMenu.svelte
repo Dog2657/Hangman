@@ -1,27 +1,20 @@
 <script lang="ts">
-    
     import WordBankModel from "./WordBankModel.svelte";
+    import CatagoryLoader from "./CatagoryLoader.svelte";
 
-
-
-
-
-
-
-    
-    import { getEventTarget, generateNumberFromRange } from "../lib/general";
-    
+    import { getEventTarget } from "../lib/general";
     import { gameStatus } from '../lib/gameStatus'
     import { fade } from 'svelte/transition';
-    import CatagoryLoader from "./CatagoryLoader.svelte";
 
     let openWordBankModel: () => void
     
+    //@ts-ignore
     async function playCustomWord(e){
         const value = getEventTarget(e).querySelector("input")?.value || ""
         gameStatus.start(value)
     }
 
+    //@ts-ignore
     async function playCatagoryWord(e){
         /*const value = getEventTarget(e).querySelector("select")?.value || ""
         const catWords = await words[value]
