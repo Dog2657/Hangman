@@ -68,6 +68,17 @@ export async function addWord(catagory: string, word: string){
     words.set(Promise.resolve(instance))
 
 
+    if(subtractive[catagory] != undefined && subtractive[catagory].has(word)){
+        subtractive[catagory].delete(word)
+        saveLocalStorageJSON("subtractiveWords", dumpAlteration(subtractive))
+        return
+    }
+
+    if(additive[catagory] == undefined)
+        additive[catagory] = new Set()
+
+    additive[catagory].add(word)
+    saveLocalStorageJSON("additiveWords", dumpAlteration(additive))
 }
 
 
@@ -83,7 +94,6 @@ export async function deleteWord(catagory: string, word: string) {
 
 
     if(additive[catagory] != undefined && additive[catagory].has(word)){
-        console.log("User Added Word")
         additive[catagory].delete(word)
         saveLocalStorageJSON("additiveWords", dumpAlteration(additive))
         return

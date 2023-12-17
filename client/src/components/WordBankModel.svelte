@@ -3,7 +3,7 @@
     import Loader from "./Loader.svelte";
     import Icon from "./Icon.svelte";
 
-    import { words, addWord } from "../lib/words"
+    import { words, addWord, deleteWord } from "../lib/words"
     import { getEventTarget } from "../lib/general";
     import { fade } from 'svelte/transition';
     import { get } from "svelte/store";
@@ -75,7 +75,7 @@
                         {#each words as word}
                             <tr>
                                 <td>
-                                    <button on:click={() => {}}>
+                                    <button on:click={() => {deleteWord(selectedCatagory, word)}}>
                                         <Icon name="cross" width={10} height={10}/>
                                     </button>
                                 </td>
