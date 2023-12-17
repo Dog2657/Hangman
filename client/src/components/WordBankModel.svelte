@@ -8,8 +8,9 @@
     import { fade } from 'svelte/transition';
     import { get } from "svelte/store";
     import { onMount } from "svelte";
+    import EntryInput from "./EntryInput.svelte";
 
-    let display: boolean = false
+    let display: number = -1
 
     let selectedCatagory: string
     $: catagoryWords = new Promise<Set<String>>(async (resolve, reject) => {
@@ -21,102 +22,102 @@
     onMount(async () => { selectedCatagory = Object.keys(await get(words))[0] });
 
     export function open(){
-        display = true
+        display = 0
     }
 
-    async function handelWordAdd(e){
-        const word = getEventTarget(e).querySelector("input")?.value.toLowerCase() || ""
+    async function handelWordAdd(value: string, success: () => void, error: () => void){
+        const word = value.toLowerCase()
 
         if((await catagoryWords).has(word))
-            return;
+            return error()
 
         addWord(selectedCatagory, word)
-    
-        //@ts-ignore
-        getEventTarget(e).querySelector("input").value = ""
+        success()
+    }
+
+    async function handelNewCatagory(value: string, success: () => void, error: () => void) {
+        console.log(value)
     }
 </script>
 
-{#if display}
+{#if display >= 0}
     <div class="word-bank-model" in:fade={{duration: 200}} out:fade={{duration: 300}}>
-        <article>
-            <header>
-                <button on:click={() => {display = false}}>
-                    <Icon name="cross" width={20} height={20}/>
-                </button>
-                <h2>Words</h2>
-            </header>
-            <section class="catagory-selector">
-                <CatagoryLoader let:categories>
-                    <select bind:value={selectedCatagory}>
+        <section class:words={display == 0} class:catagory={display == 1}>
+            {#if display === 0}
+                <header>
+                    <button on:click={() => {display = -1}}>
+                        <Icon name="cross" width={20} height={20}/>
+                    </button>
+                    <h2>Words</h2>
+                </header>
+                <section class="catagory-selector">
+                    <CatagoryLoader let:categories>
+                        <select bind:value={selectedCatagory}>
+                            {#each categories as catagory}
+                                <option>{catagory}</option>
+                            {/each}
+                        </select>
                         {#each categories as catagory}
-                            <option>{catagory}</option>
+                            <button class:selected={catagory === selectedCatagory} on:click={() => { selectedCatagory = catagory }}>{catagory}</button>
                         {/each}
-                    </select>
-                    {#each categories as catagory}
-                        <button class:selected={catagory === selectedCatagory} on:click={() => { selectedCatagory = catagory }}>{catagory}</button>
-                    {/each}
+                    </CatagoryLoader>
+                    <button class="catagory-modify" on:click={() => {display = 1}}>
+                        <Icon name="edit" width={10} height={10}/>
+                    </button>
+                </section>
+
+                <EntryInput placeholder="Custom Word" callback={handelWordAdd}/>
+
+                <section class="words">
+                    {#await catagoryWords}
+                        <Loader/>
+                    {:then words} 
+                        <table>
+                            {#each words as word}
+                                <tr>
+                                    <td>
+                                        <button on:click={() => {deleteWord(selectedCatagory, word)}}>
+                                            <Icon name="cross" width={10} height={10}/>
+                                        </button>
+                                    </td>
+                                    <td>{word}</td>
+                                </tr>
+                            {/each}
+                        </table>
+                    {/await}
+                </section>
+            {:else if display == 1}
+                <header>
+                    <button on:click={() => {display = 0}}>
+                        <Icon name="cross" width={20} height={20}/>
+                    </button>
+                    <h2>Categories</h2>
+                </header>
+                <EntryInput placeholder="New catagory" callback={handelNewCatagory}/>
+                <CatagoryLoader let:categories>
+                    <section>
+                        {#each categories as catagory}
+                            <button on:click={() => {  }}>{catagory}</button>
+                        {/each}
+                    </section>
                 </CatagoryLoader>
-            </section>
-
-            <form class="entry-inputer" on:submit|preventDefault={handelWordAdd}>
-                <input type="text" required placeholder="">
-                <div>E.g. Animals or planets</div>
-                <button type="submit">
-                    <Icon name="enter" width={15} height={15}/>
-                </button>
-            </form>
-
-            <section class="words">
-                {#await catagoryWords}
-                    <Loader/>
-                {:then words} 
-                    <table>
-                        {#each words as word}
-                            <tr>
-                                <td>
-                                    <button on:click={() => {deleteWord(selectedCatagory, word)}}>
-                                        <Icon name="cross" width={10} height={10}/>
-                                    </button>
-                                </td>
-                                <td>{word}</td>
-                            </tr>
-                        {/each}
-                    </table>
-                {/await}
-            </section>
-        </article>
+            {/if}
+        </section>
     </div>
 {/if}
 
 <style lang="scss">
     @import '../assets/veriables.scss';
+    $mobile-size: 500px;
 
     div.word-bank-model{
-        $mobile-size: 500px;
         @include CustomModel($mobile-size);
-    
-        & > article{
+
+
+
+        & > section{
             max-height: 100vh;
             overflow-y: scroll;
-
-            @media (width > $mobile-size) {
-                display: grid; 
-                grid-auto-columns: 1fr; 
-                grid-auto-rows: 1fr; 
-                grid-template-columns: 0.5fr 1.5fr; 
-                grid-template-rows: max-content 0.2fr 1.8fr; 
-                gap: 0px 10px; 
-                grid-template-areas: 
-                    "Header Header"
-                    "Catagorys New-enterys"
-                    "Catagorys Words"; 
-            }
-
-            @media (width <= $mobile-size) {
-                display: flex;
-                flex-direction: column;
-            }
 
             & > header{
                 grid-area: Header;
@@ -152,17 +153,41 @@
                     margin: 0;
                 }
             }
-        
+        }
+    
+        & > section.words{
+            @media (width > $mobile-size) {
+                display: grid; 
+                grid-auto-columns: 1fr; 
+                grid-auto-rows: 1fr; 
+                grid-template-columns: 0.5fr 1.5fr; 
+                grid-template-rows: max-content 0.2fr 1.8fr; 
+                gap: 0px 10px; 
+                grid-template-areas: 
+                    "Header Header"
+                    "Catagorys New-enterys"
+                    "Catagorys Words"; 
+            }
+
+            @media (width <= $mobile-size) {
+                display: flex;
+                flex-direction: column;
+            }
+            
             & > section.catagory-selector{
                 grid-area: Catagorys;
+                display: flex;
+                gap: 10px;
 
                 @media (width > $mobile-size) {
-                    display: flex;
                     flex-direction: column;
-                    gap: 10px;
                     overflow-y: scroll;
                     border-right: 1px solid white;
                     padding-right: 10px;
+                }
+
+                @media (width <= $mobile-size) {
+                    margin-bottom: 20px;
                 }
                 
 
@@ -173,7 +198,7 @@
                     place-items: center;
                 }
 
-                & > button{
+                & > button:not(.catagory-modify){
                     @media (width <= $mobile-size) { display: none; }
 
                     &:not(.selected){
@@ -197,6 +222,17 @@
                     border: none;
                 }
 
+                button.catagory-modify{
+                    @include FancyButton(rgb(37, 37, 172));
+                    @media (width <= $mobile-size) {border-radius: 10px;}
+                    @media (width > $mobile-size) {
+                        &::after{
+                            content: "Edit";
+                            margin-left: 5px;
+                        }
+                    }
+                }
+
                 & > select{
                     @media (width > $mobile-size) { display: none; }
                     &:not(:is(:hover, :active)){ outline-color: white; }
@@ -208,62 +244,11 @@
                     transition: outline 400ms ease-out;
                     outline-style: solid;
                     border-radius: 10px;
-                    margin-bottom: 20px;
                     outline-width: 1px;
                     background: none;
                     border: none;
                     height: 40px;
                     width: 100%;
-                }
-            }
-
-            & > form.entry-inputer {
-                $padding: 15px;
-                
-                background-color: rgb(57, 92, 98);
-                grid-area: New-enterys;
-                position: relative;
-                border-radius: 5px;
-                padding: $padding;
-                display: flex;
-                margin-bottom: 20px;
-
-                & > input:is(:focus, :focus-within, :not(:placeholder-shown)) + div{
-                    transition: all 150ms ease-in;
-                    font-size: 13px;
-                    bottom: 70%;
-                }                
-
-                &::after{
-                    width: calc(100% - ($padding * 2));
-                    border-top: 1px solid white;
-                    position: absolute;
-                    bottom: $padding;
-                    left: $padding;
-                    display: block;
-                    content: "";
-                }
-
-                & > input{
-                    outline: transparent;
-                    background: none;
-                    border: none;
-                    flex-grow: 1;
-                }
-
-                & > div{
-                    bottom: calc($padding + 2px );
-                    transition: all 300ms ease-out;
-                    position: absolute;
-                    pointer-events: none;
-                    font-size: 17px;
-                }
-
-                & > button{
-                    background: none;
-                    outline: transparent;
-                    border: none;
-                    cursor: pointer;
                 }
             }
 
@@ -309,6 +294,10 @@
                     }
                 }
             }
+        }
+
+        & > section.catagory{
+
         }
     }
 </style>
