@@ -2,10 +2,14 @@ import { getLocalStorageJSON, saveLocalStorageJSON } from "./general";
 import { request } from "./apiRequester"
 import { get, writable } from 'svelte/store';
 
-function parseAlteration(data: Record<string, Array<string>>){
-    const output: Record<string, Set<string>> = {}
+function parseAlteration(data: Record<string, Array<string> | boolean>){
+    const output: Record<string, Set<string> | boolean> = {}
     Object.keys(data).forEach(key => {
-        output[key] = new Set(data[key])
+
+        if(typeof data[key] == 'boolean')
+            output[key] = true
+        else
+            output[key] = new Set(data[key])
     });
     return output
 }
@@ -37,6 +41,10 @@ async function getCatagoryWords(name: string, additive: Set<string> = new Set, s
         return additive
 
     const words = new Set([...result, ...additive])
+
+    if(typeof subtractive == "boolean")
+        return new Set()
+
     subtractive.forEach(word => { words.delete(word) })
 
     return words
@@ -47,10 +55,12 @@ export const words = writable(new Promise<Record<string, Promise<Set<String>>>>(
     const [result, error] = await request("word-catagorys")
     const data: Record<string, Promise<Set<string>>> = {}
 
-    const {additive, subtractive } = getWordAlterations()
+    const {additive, subtractive } = getWordAlterations();
 
-    result.forEach((name: string) => {
-        data[name] = getCatagoryWords(name, additive[name], subtractive[name])
+    [...result, ...Object.keys(additive)].forEach((name: string) => {
+        const details = getCatagoryWords(name, additive[name], subtractive[name])
+        console.log(name, details)
+        data[name] = details
     });
 
     resolve(data)
