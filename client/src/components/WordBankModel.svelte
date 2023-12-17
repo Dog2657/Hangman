@@ -1,12 +1,13 @@
 <script lang="ts">
+    import CatagoryLoader from "./CatagoryLoader.svelte";
     import Loader from "./Loader.svelte";
     import Icon from "./Icon.svelte";
 
-    import { words } from "../lib/words"
+    import { words, addWord } from "../lib/words"
+    import { getEventTarget } from "../lib/general";
     import { fade } from 'svelte/transition';
-    import { onMount } from "svelte";
-    import CatagoryLoader from "./CatagoryLoader.svelte";
     import { get } from "svelte/store";
+    import { onMount } from "svelte";
 
     let display: boolean = false
 
@@ -17,31 +18,22 @@
         resolve(catagoryWords || [])
     })
 
-
-
     onMount(async () => { selectedCatagory = Object.keys(await get(words))[0] });
-
 
     export function open(){
         display = true
     }
 
-    async function addWord(e){
-        /*const word = getEventTarget(e).querySelector("input")?.value.toLowerCase() || ""
+    async function handelWordAdd(e){
+        const word = getEventTarget(e).querySelector("input")?.value.toLowerCase() || ""
 
-        if((await words[selectedCatagory]).includes(word))
+        if((await catagoryWords).has(word))
             return;
 
-        addWordToCatagory(selectedCatagory, word)
-        refreshWordBank()
-
+        addWord(selectedCatagory, word)
+    
         //@ts-ignore
-        getEventTarget(e).querySelector("input").value = ""*/
-    }
-
-    async function removeWord(word: string){
-        /*removeWordFromCatagory(selectedCatagory, word)
-        refreshWordBank()*/
+        getEventTarget(e).querySelector("input").value = ""
     }
 </script>
 
@@ -67,7 +59,7 @@
                 </CatagoryLoader>
             </section>
 
-            <form class="entry-inputer" on:submit|preventDefault={addWord}>
+            <form class="entry-inputer" on:submit|preventDefault={handelWordAdd}>
                 <input type="text" required placeholder="">
                 <div>E.g. Animals or planets</div>
                 <button type="submit">
@@ -83,7 +75,7 @@
                         {#each words as word}
                             <tr>
                                 <td>
-                                    <button on:click={() => {removeWord(word)}}>
+                                    <button on:click={() => {}}>
                                         <Icon name="cross" width={10} height={10}/>
                                     </button>
                                 </td>
