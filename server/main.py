@@ -33,11 +33,11 @@ async def startup():
                 if(line != ""):
                     words.append(line.lower())
     
-            catagorys[filename.split('.')[0]] = words
+            catagorys[filename.split('.')[0].lower()] = words
 
 
 def getCatagory(catagory: str):
-    words = catagorys.get(catagory, None)
+    words = catagorys.get(catagory.lower(), None)
     if(words is None):
         raise HTTPException(404, "Catagory not found")
     

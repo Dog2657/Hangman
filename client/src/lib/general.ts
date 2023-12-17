@@ -1,4 +1,11 @@
 //@ts-ignore
+String.prototype.toTitleCase = function() {
+    return this.split(' ').map(word => {
+        return word[0].toUpperCase() + word.substring(1, word.length)
+    }).join(' ')
+};
+
+//@ts-ignore
 export function getEventTarget(e): HTMLElement{
     return e.target || e.srcElement || e.originalTarget
 }

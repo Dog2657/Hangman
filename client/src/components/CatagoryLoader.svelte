@@ -18,7 +18,7 @@
 
             wordPromises.forEach((value, index) => {
                 if(value.size > 0)
-                    validCategories.push(names[index])
+                    validCategories.push(names[index].toTitleCase())
             })
 
             resolve(validCategories)
