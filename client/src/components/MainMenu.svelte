@@ -61,8 +61,10 @@
                 </CatagoryLoader>
             </form>
             <form on:submit|preventDefault={playRandomWord}>
-                <div>Random</div>
-                <button>Play</button>
+                <CatagoryLoader validate={true}>
+                    <div>Random</div>
+                    <button>Play</button>
+                </CatagoryLoader>
             </form>
             <div class="devider"></div>
             <button on:click={openWordBankModel} class="word-bank">Word Bank</button>
@@ -105,18 +107,19 @@
                 gap: 10px;
 
                 & > form{
-                    &:not(:is(:focus-within, :focus)){ background-color: rgba(var(--Colour), .2); }
-                    &:is(:focus-within, :focus){ background-color: rgba(var(--Colour), .4); }
+                    &:not(:is(:focus-within, :focus)){ background-color: color-mix(in srgb, var(--Colour), transparent 80%); }
+                    &:is(:focus-within, :focus){ background-color: color-mix(in srgb, var(--Colour), transparent 60%); }
 
-                    &:nth-of-type(1){--Colour: 0, 128, 0;}
-                    &:nth-of-type(2){--Colour: 255, 255, 0;}
-                    &:nth-of-type(3){--Colour: 255, 45, 45;}
+                    &:nth-of-type(1){--Colour: rgb(0, 128, 0);}
+                    &:nth-of-type(2){--Colour: rgb(255, 255, 0);}
+                    &:nth-of-type(3){--Colour: rgb(255, 45, 45);}
 
                     transition: opacity 200ms ease-in-out,
                         background-color 500ms ease-in-out;
+                        justify-content: center;
                     border-radius: 0.25em;
-                    position: relative;
                     align-items: center;
+                    position: relative;
                     font-size: 15px;
                     display: flex;
                     height: 41px;
