@@ -54,7 +54,7 @@
                         {/each}
                     </select>
                     {#each categories as catagory}
-                        <button class:selected={catagory === selectedCatagory}>{catagory}</button>
+                        <button class:selected={catagory === selectedCatagory} on:click={() => { selectedCatagory = catagory }}>{catagory}</button>
                     {/each}
                 </CatagoryLoader>
             </section>
