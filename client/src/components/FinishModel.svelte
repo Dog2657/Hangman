@@ -3,26 +3,29 @@
     import { currentGame } from "../lib/gameStatus";
     
     function calculateDuration(){
-        /*let duration = $gameStatus.finished - $gameStatus.start
+        const duration = $currentGame.finished - $currentGame.start
+
+        let seconds = Math.floor(duration/1000)
         let output = ""
 
         
+        
+        const hours = Math.floor(seconds/3600)
+        if(hours > 0){
+            seconds -= hours * 3600
+            output = `${hours}h `
+        }
+        
 
-        const minutes = Math.floor(duration/60000)
+        const minutes = Math.floor(seconds/60)
         if(minutes > 0){
-            duration -= minutes * 60000
-            output = minutes + "m"
+            seconds -= minutes * 60
+            output += `${minutes}m `
         }
 
-        const seconds = Math.floor(duration/1000)
-        if(seconds > 0){
-            duration -= seconds * 1000
-            output += seconds + "s"
-        }
+        output += `${seconds}s`
 
-        output = duration + "ms"
-
-        return output*/
+        return output
     }
 </script>
 
