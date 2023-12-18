@@ -7,15 +7,13 @@ export class Game{
     validChars: Set<Array<string>> = new Set()
     catagory: string | undefined
     word: string
-    customCatagory: boolean
     finished: Date | undefined
     start: Date
 
-    constructor(word: string, catagory: string = "", customCatagory: boolean = false){
+    constructor(word: string, catagory: string = ""){
         this.word = word.toLowerCase()
         this.start = new Date
         this.catagory = catagory
-        this.customCatagory = customCatagory
 
         Array.from(word).forEach(letter => { 
             letter = letter.toLowerCase()
@@ -29,7 +27,7 @@ export class Game{
 export const currentGame: Writable<Game | undefined> = writable()
 
 export function startGame(word: string, catagory: string = "", customCatagory: boolean = false){
-    currentGame.set(new Game(word, catagory, customCatagory))
+    currentGame.set(new Game(word, catagory))
 }
 
 export function endGame(){

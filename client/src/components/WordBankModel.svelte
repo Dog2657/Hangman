@@ -13,7 +13,7 @@
     let display: number = -1
 
     let selectedCatagory: string
-    $: catagoryWords = new Promise<Set<String>>(async (resolve, reject) => {
+    $: catagoryWords = new Promise<Array<String>>(async (resolve, reject) => {
         const instace = await $words
         const catagoryWords = await instace[selectedCatagory]
         resolve(catagoryWords || [])
@@ -28,7 +28,7 @@
     async function handelWordAdd(value: string, success: () => void, error: () => void){
         const word = value.toLowerCase()
 
-        if((await catagoryWords).has(word))
+        if((await catagoryWords).includes(word))
             return error()
 
         addWord(selectedCatagory, word)

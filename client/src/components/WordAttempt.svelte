@@ -5,43 +5,43 @@
 
     export let display = false
 
-    let gess = ""
-    let gessed = false
+    let guess = ""
+    let guessed = false
 
     function gessWord(){
         const instance = get(currentGame)
-        if(instance?.word == gess)
+        if(instance?.word == guess.toLowerCase())
             return currentGame.update(value => {
-                value.finished = new Date()
-                value.validChars = new Set()
+                (value as Game).finished = new Date();
+                (value as Game).validChars = new Set();
                 return value
             })
             
         currentGame.update(value => {
-            value.remainingAttempts = (value.remainingAttempts -1)
-            if(value.remainingAttempts <= 0)
-                value.finished = true
+            (value as Game).remainingAttempts = ((value as Game).remainingAttempts -1)
+            if((value as Game).remainingAttempts <= 0)
+                (value as Game).finished = new Date()
 
             return value
         })
-        gessed = true
+        guessed = true
     }
 </script>
 {#if display}
     <div class="word-attempt-model" in:fade={{duration: 300}}>
-        {#if gessed}
+        {#if guessed}
             <section>
                 <h2>You Guessed Wrong</h2>
                 <div>You have {$currentGame?.remainingAttempts} attempts left</div>
                 <button type="button" on:click={() => {
                     display = false
-                    gessed = false
+                    guessed = false
                 }}>Close</button>
             </section>
         {:else}
             <form on:submit|preventDefault={gessWord} in:scale={{duration: 200, delay: 200}}>
                 <h2>What's the word</h2>
-                <input required bind:value={gess}>
+                <input required bind:value={guess}>
                 <section class="actions">
                     <button type="submit">Check</button>
                     <button type="button" on:click={() => {display = false}}>Cancel</button>

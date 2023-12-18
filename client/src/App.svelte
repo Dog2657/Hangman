@@ -12,5 +12,6 @@
     <Game/>
 {/if}
 
-
-<FinishModel/>
+{#if $currentGame?.finished}
+    <FinishModel/>
+{/if}

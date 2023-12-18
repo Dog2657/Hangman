@@ -18,8 +18,8 @@
             const validCategories: Array<string> = []
 
             wordPromises.forEach((value, index) => {
-                if(value.size > 0)
-                    validCategories.push( toTitleCase(names[index]) )
+                if(value.length > 0)
+                    validCategories.push( names[index] )
             })
 
             resolve(validCategories)

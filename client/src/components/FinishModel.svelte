@@ -1,14 +1,25 @@
-<script>
+<script lang="ts">
     import { fade } from "svelte/transition";
     import { currentGame } from "../lib/gameStatus";
+    import { isCustomCatagory } from "../lib/words";
+    import { onMount } from "svelte";
+    import { get } from "svelte/store";
+    import { toTitleCase } from "../lib/general";
+
+    let customCatagory = false
+
+    onMount(async() => {
+        const instance = get(currentGame)
+        //@ts-ignore
+        customCatagory = (await isCustomCatagory(instance?.catagory))
+    })
     
     function calculateDuration(){
+        //@ts-ignore
         const duration = $currentGame.finished - $currentGame.start
 
         let seconds = Math.floor(duration/1000)
         let output = ""
-
-        
         
         const hours = Math.floor(seconds/3600)
         if(hours > 0){
@@ -44,8 +55,8 @@
                 <div>{$currentGame?.word}</div>
                 {#if $currentGame?.catagory}
                     <div>
-                        {$currentGame?.catagory}
-                        {#if $currentGame?.customCatagory}
+                        {toTitleCase($currentGame?.catagory)}
+                        {#if customCatagory}
                             (<i>Custom</i>)
                         {/if}
                     </div>

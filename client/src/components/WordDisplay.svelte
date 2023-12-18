@@ -1,7 +1,5 @@
 <script lang=ts>
     import { currentGame } from '../lib/gameStatus'
-
-    $:{console.log($currentGame)}
 </script>
 
 {#if $currentGame}

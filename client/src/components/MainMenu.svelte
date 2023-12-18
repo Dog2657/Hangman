@@ -2,9 +2,11 @@
     import WordBankModel from "./WordBankModel.svelte";
     import CatagoryLoader from "./CatagoryLoader.svelte";
 
-    import { getEventTarget } from "../lib/general";
+    import { generateNumberFromRange, getEventTarget, toTitleCase } from "../lib/general";
     import { currentGame, startGame } from '../lib/gameStatus'
+    import { words, isCustomCatagory } from "../lib/words";
     import { fade } from 'svelte/transition';
+    import { get } from "svelte/store";
 
     let openWordBankModel: () => void
     
@@ -16,22 +18,29 @@
 
     //@ts-ignore
     async function playCatagoryWord(e){
-        /*const value = getEventTarget(e).querySelector("select")?.value || ""
-        const catWords = await words[value]
-        const index = generateNumberFromRange(catWords.length -1)
+        const instance = await get(words)
+        const name = getEventTarget(e).querySelector("select")?.value || ""
 
-        gameStatus.start(catWords[index], value)*/
+        const catagory = Array.from(await instance[name])
+        const index = generateNumberFromRange(catagory.length -1)
+
+        //@ts-ignore
+        startGame(catagory[index], name)
     }
 
     async function playRandomWord(){
-        /*const cats = await catagorys
-        const catIndex = generateNumberFromRange(cats.length -1)
-        const cat = cats[catIndex]
+        const instance = await get(words)
+        const catagories = Object.keys(instance)
 
-        const catWords = await words[cat]
-        const wordsIndex = generateNumberFromRange(catWords.length -1)
+        const catagoryIndex = generateNumberFromRange(catagories.length -1)
+        const catagoryName = catagories[catagoryIndex]
+        const catagory = await instance[catagoryName]
 
-        gameStatus.start(catWords[wordsIndex], cat)*/
+        const wordIndex = generateNumberFromRange(catagory.length)
+        const word = catagory[wordIndex]
+
+        //@ts-ignore
+        startGame(word, catagoryName)
     }
 </script>
 
@@ -47,7 +56,7 @@
                 <CatagoryLoader validate={true} let:categories>
                     <select>
                         {#each categories as catagory}
-                            <option>{catagory}</option>
+                            <option value={catagory}>{toTitleCase(catagory)}</option>
                         {/each}
                     </select>
                     <button>Play</button>

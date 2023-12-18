@@ -9,44 +9,26 @@ export const globalWords = new Promise<Array<string>>(async(resolve, reject) => 
     resolve(result)
 }) 
 
-function parseAlteration(data: Record<string, Array<string>>){
-    const output: Record<string, Set<string> | boolean> = {}
-    Object.keys(data).forEach(key => {
-        if(typeof data[key] == 'boolean')
-            output[key] = true
-        else
-            output[key] = new Set(data[key])
-    });
-    return output
-}
-
-function dumpAlteration(data: Record<string, Set<string>>){
-    const output: Record<string, Array<string> | boolean> = {}
-    Object.keys(data).forEach(key => {
-        if(typeof data[key] == 'boolean')
-            output[key] = true
-        else
-            output[key] = Array.from(data[key])
-    });
-    return output
+export async function isCustomCatagory(catagory: string){
+    const catagorys = await globalWords
+    return !catagorys.includes(catagory)
 }
 
 
-function getWordAlterations(): {additive: Record<string, Set<string>>, subtractive: Record<string, Set<string>>}{
+
+function getWordAlterations(): {additive: Record<string, Array<string>>, subtractive: Record<string, Array<string>>}{
     const additive = getLocalStorageJSON("additiveWords") || {}
     const subtractive = getLocalStorageJSON("subtractiveWords") || {}
     
     return {
-        //@ts-ignore
-        additive: parseAlteration(additive),
-        //@ts-ignore
-        subtractive: parseAlteration(subtractive)
+        additive: additive,
+        subtractive: subtractive
     }
 }
 
 
 
-async function getCatagoryWords(name: string, additive: Set<string> = new Set, subtractive: Set<string> = new Set){
+async function getCatagoryWords(name: string, additive: Array<string> = [], subtractive: Array<string> = []){
     let globalResults = []
     
     if((await globalWords).includes(name)){
@@ -55,22 +37,24 @@ async function getCatagoryWords(name: string, additive: Set<string> = new Set, s
             globalResults = result
     }
     
-    const words = new Set([...globalResults, ...additive])
+    const words = [...globalResults, ...additive]
 
     if(typeof subtractive == "boolean")
-        return new Set()
+        return []
 
-    subtractive.forEach(word => { words.delete(word) })
+    subtractive.forEach(word => { words.splice(words.indexOf(word), 1) })
 
     return words
 }   
 
 
-export const words = writable(new Promise<Record<string, Promise<Set<String>>>>(async (resolve, reject) => {
+export const words = writable(new Promise<Record<string, Promise<Array<String>>>>(async (resolve, reject) => {
     const result = await globalWords
-    const data: Record<string, Promise<Set<string>>> = {}
+    const data: Record<string, Promise<Array<string>>> = {}
 
     const {additive, subtractive } = getWordAlterations();
+
+
 
     [...result, ...Object.keys(additive)].forEach((name: string) => {
         if(subtractive[name] == undefined || typeof subtractive[name] !== "boolean")
@@ -86,26 +70,26 @@ export async function addWord(catagory: string, word: string){
     const instance = await get(words);
     const catagoryInstance = await instance[catagory]
 
-    catagoryInstance.add(word)
+    catagoryInstance.unshift(word)
     
     instance[catagory] = Promise.resolve(catagoryInstance)
     words.set(Promise.resolve(instance))
 
 
-    if(subtractive[catagory] != undefined && subtractive[catagory].has(word)){
-        subtractive[catagory].delete(word)
-        if(subtractive[catagory].size <= 0)
+    if(subtractive[catagory] != undefined && subtractive[catagory].includes(word)){
+        subtractive[catagory].splice(subtractive[catagory].indexOf(word), 1)
+        if(subtractive[catagory].length <= 0)
             delete subtractive[catagory]
 
-        saveLocalStorageJSON("subtractiveWords", dumpAlteration(subtractive))
+        saveLocalStorageJSON("subtractiveWords", subtractive)
         return
     }
 
     if(additive[catagory] == undefined)
-        additive[catagory] = new Set()
+        additive[catagory] = []
 
-    additive[catagory].add(word)
-    saveLocalStorageJSON("additiveWords", dumpAlteration(additive))
+    additive[catagory].unshift(word)
+    saveLocalStorageJSON("additiveWords", additive)
 }
 
 
@@ -114,27 +98,27 @@ export async function deleteWord(catagory: string, word: string) {
     const instance = await get(words);
     const catagoryInstance = await instance[catagory]
 
-    catagoryInstance.delete(word)
+    catagoryInstance.splice(catagoryInstance.indexOf(word), 1)
     
     instance[catagory] = Promise.resolve(catagoryInstance)
     words.set(Promise.resolve(instance))
 
 
-    if(additive[catagory] != undefined && additive[catagory].has(word)){
-        additive[catagory].delete(word)
-        if(additive[catagory].size <= 0)
+    if(additive[catagory] != undefined && additive[catagory].includes(word)){
+        additive[catagory].splice(additive[catagory].indexOf(word), 1)
+        if(additive[catagory].length <= 0)
             delete additive[catagory]
 
         
-        saveLocalStorageJSON("additiveWords", dumpAlteration(additive))
+        saveLocalStorageJSON("additiveWords", additive)
         return
     }
 
     if(subtractive[catagory] == undefined)
-        subtractive[catagory] = new Set()
+        subtractive[catagory] = []
 
-    subtractive[catagory].add(word)
-    saveLocalStorageJSON("subtractiveWords", dumpAlteration(subtractive))
+    subtractive[catagory].unshift(word)
+    saveLocalStorageJSON("subtractiveWords", subtractive)
 }
 
 export async function addCatagory(name: string){
@@ -144,10 +128,10 @@ export async function addCatagory(name: string){
 
     if(subtractive[name] !== undefined){
         delete subtractive[name]
-        saveLocalStorageJSON("subtractiveWords", dumpAlteration(subtractive))
+        saveLocalStorageJSON("subtractiveWords", subtractive)
     }else{
-        additive[name] = new Set()
-        saveLocalStorageJSON("additiveWords", dumpAlteration(additive))
+        additive[name] = []
+        saveLocalStorageJSON("additiveWords", additive)
     }
 
     instance[name] = getCatagoryWords(name, additive[name], subtractive[name])
@@ -164,10 +148,10 @@ export async function deleteCatagory(name: string){
    
     if(additive[name] !== undefined){
         delete additive[name]
-        saveLocalStorageJSON("additiveWords", dumpAlteration(additive))
+        saveLocalStorageJSON("additiveWords", additive)
     }else{
         //@ts-ignore
         subtractive[name] = true
-        saveLocalStorageJSON("subtractiveWords", dumpAlteration(subtractive))
+        saveLocalStorageJSON("subtractiveWords", subtractive)
     }
 }
