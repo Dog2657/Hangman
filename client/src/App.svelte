@@ -3,15 +3,14 @@
     import MainMenu from "./components/MainMenu.svelte";
     import Game from "./components/Game.svelte";
 
-    import { gameStatus } from './lib/gameStatus'
+    import { currentGame } from './lib/gameStatus'
 </script>
 
-{#if $gameStatus == undefined || $gameStatus?.finished}
+{#if $currentGame == undefined || $currentGame?.finished}
     <MainMenu/>
 {:else}
     <Game/>
 {/if}
 
-{#if $gameStatus?.finished}
-    <FinishModel/>
-{/if}
+
+<FinishModel/>

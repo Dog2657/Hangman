@@ -1,9 +1,9 @@
 <script>
     import { fade } from "svelte/transition";
-    import { gameStatus } from "../lib/gameStatus";
+    import { currentGame } from "../lib/gameStatus";
     
     function calculateDuration(){
-        let duration = $gameStatus.finished - $gameStatus.start
+        /*let duration = $gameStatus.finished - $gameStatus.start
         let output = ""
 
         
@@ -22,15 +22,15 @@
 
         output = duration + "ms"
 
-        return output
+        return output*/
     }
 </script>
 
-{#if $gameStatus}
-    <div class="finish-model" transition:fade={{duration: 200}}>
+{#if $currentGame && $currentGame.finished}
+    <div class="finish-model" in:fade={{duration: 400}} out:fade={{duration: 250}}>
         <section> 
             <h1>
-                {#if $gameStatus.validChars.size <= 0}
+                {#if $currentGame?.validChars.size <= 0}
                     You Win
                 {:else}
                     You Lose
@@ -38,11 +38,11 @@
             </h1>
             <section class="word">
                 <div>Your Word</div>
-                <div>{$gameStatus.word}</div>
-                {#if $gameStatus.catagory}
+                <div>{$currentGame?.word}</div>
+                {#if $currentGame?.catagory}
                     <div>
-                        {$gameStatus.catagory}
-                        {#if $gameStatus.customCatagory}
+                        {$currentGame?.catagory}
+                        {#if $currentGame?.customCatagory}
                             (<i>Custom</i>)
                         {/if}
                     </div>
@@ -52,13 +52,13 @@
             <section class="details">
                 <div>Time</div>
                 <div>{calculateDuration()}</div>
-                {#if $gameStatus.validChars.size <= 0}
+                {#if $currentGame.validChars.size <= 0}
                     <div>Wrong gesses</div>
-                    <div>{10 - $gameStatus.remainingAttempts}</div>
+                    <div>{10 - $currentGame.remainingAttempts}</div>
                 {/if}
             </section>
 
-            <button on:click={() => {gameStatus.end()}}>Continue</button>
+            <button on:click={() => {currentGame.set(undefined)}}>Continue</button>
         </section>
     </div>
 {/if}

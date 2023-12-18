@@ -3,7 +3,7 @@
     import CatagoryLoader from "./CatagoryLoader.svelte";
 
     import { getEventTarget } from "../lib/general";
-    import { gameStatus } from '../lib/gameStatus'
+    import { currentGame, startGame } from '../lib/gameStatus'
     import { fade } from 'svelte/transition';
 
     let openWordBankModel: () => void
@@ -11,7 +11,7 @@
     //@ts-ignore
     async function playCustomWord(e){
         const value = getEventTarget(e).querySelector("input")?.value || ""
-        gameStatus.start(value)
+        startGame(value.replace(/\s+/g,' '))
     }
 
     //@ts-ignore
@@ -35,7 +35,7 @@
     }
 </script>
 
-<main transition:fade={($gameStatus?.finished)? {duration: 500, delay: 200} : {duration: 200}}>
+<main transition:fade={($currentGame?.finished)? {duration: 500, delay: 250} : {duration: 200}}>
     <section>
         <h1>HangMan</h1>
         <div>

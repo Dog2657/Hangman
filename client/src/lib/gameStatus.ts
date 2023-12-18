@@ -1,4 +1,5 @@
-import { writable, type Subscriber, type Invalidator, type Unsubscriber } from "svelte/store";
+import type { Writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 
 class Game{
     remainingAttempts = 10;
@@ -6,60 +7,54 @@ class Game{
     validChars: Set<Array<string>> = new Set()
     catagory: string | undefined
     word: string
+    customCatagory: boolean
     finished: Date | undefined
     start: Date
 
-    constructor(word: string, catagory = undefined){
+    constructor(word: string, catagory: string = "", customCatagory: boolean = false){
         this.word = word.toLowerCase()
         this.start = new Date
         this.catagory = catagory
-
-        console.log(catagory)
+        this.customCatagory = customCatagory
 
         Array.from(word).forEach(letter => { 
+            letter = letter.toLowerCase()
             if(RegExp(/[a-z]/).test(letter) && !this.validChars.has(letter))
                 this.validChars.add(letter)
         });
     }
 }
 
-function getStoreValue(subscribe: (this: void, run: Subscriber<unknown>, invalidate?: Invalidator<unknown> | undefined) => Unsubscriber): Promise<Game>{
-    //@ts-ignore
-    return new Promise<void>((resolve, reject) => {
-        //@ts-ignore
-        subscribe(value => { resolve(value) })
-    })
+
+export const currentGame: Writable<Game | undefined> = writable()
+
+export function startGame(word: string, catagory: string = "", customCatagory: boolean = false){
+    currentGame.set(new Game(word, catagory, customCatagory))
 }
 
-
-function createGameStatus() {
-	const { subscribe, set, update } = writable()
-
-	return {
-		subscribe,
-		start: (word: string, catagory = undefined) => update(() => {return new Game(word, catagory)}),
-        end: () => update(() => undefined),
-        testCharacter: async (character: string) => {
-            const value = await getStoreValue(subscribe)
-            character = character.toLowerCase()
-
-            //@ts-ignore
-            if((value.word.includes(character) && !value.validChars.has(character)) || value.wrongChars.has(character))
-                return
-
-            if(value.validChars.has(character)){
-                value.validChars.delete(character)
-                if(value.validChars.size <= 0)
-                    value.finished = new Date
-            }else{
-                value.remainingAttempts--
-                value.wrongChars.add(character.toLowerCase())
-                if(value.remainingAttempts <= 0)
-                    value.finished = new Date
-            }
-            set(value)
-        }
-	};
+export function endGame(){
+    currentGame.set(undefined)
 }
 
-export const gameStatus = createGameStatus()
+export function testCharacter(key: string){
+    const game = get(currentGame)
+    key = key.toLowerCase()
+
+    if(game == undefined)
+        return
+
+    if((game.word.includes(key) && !game.validChars.has(key)) || game.wrongChars.has(key))
+        return
+
+    if(game.validChars.has(key)){
+        game.validChars.delete(key)
+        if(game.validChars.size <= 0)
+            game.finished = new Date
+    }else{
+        game.remainingAttempts--
+        game.wrongChars.add(key)
+        if(game.remainingAttempts <= 0)
+            game.finished = new Date
+    }
+    currentGame.set(game)
+}
