@@ -1,34 +1,98 @@
 <script lang="ts">
-    import { gameStatus } from '../lib/gameStatus'
-
-    function handleButtonPress(key: string){
-        gameStatus.testCharacter(key)
-    }
+    import { currentGame, testCharacter } from '../lib/gameStatus'
 
     function handleKeyPress(e){
+        if($currentGame == undefined)
+            return
+
+        
         var keyCode = e.keyCode || e.which
         if(keyCode < 65 || keyCode > 90)
             return
-
-        gameStatus.testCharacter(String.fromCharCode(keyCode))
+    
+        testCharacter(String.fromCharCode(keyCode))
     }
 </script>
 
 <svelte:window on:keydown={handleKeyPress}/>
 
-<article>
-    <section>
-        {#each ["qwertyuiop", "asdfghjkl", "zxcvbnm"] as keyRow}
-            <div>
-                {#each keyRow.split('') as character}
-                    <button
-                    class:valid={$gameStatus.word.includes(character) && !$gameStatus.validChars.has(character)}
-                    class:wrong={$gameStatus.wrongChars.has(character)}
-                    on:click={() => {handleButtonPress(character)}}>
-                        {character.toUpperCase()}
-                    </button>
-                {/each}
-            </div>
-        {/each}
-    </section>
+<article class="keyboard">
+    {#each ["qwertyuiop", "asdfghjkl", "zxcvbnm"] as keyRow}
+        <div>
+            {#each keyRow.split('') as character}
+                <button
+                class:valid={$currentGame?.word.includes(character) && !$currentGame?.validChars.has(character)}
+                class:wrong={$currentGame?.wrongChars.has(character)}
+                on:click={() => {testCharacter(character)}}>
+                    {character.toUpperCase()}
+                </button>
+            {/each}
+        </div>
+    {/each}
 </article>
+
+<style lang="scss">
+    article{
+        margin: auto auto 0 auto;
+        height: max-content;
+        max-width: 100vw;
+        font-size: large;
+        width: 750px;
+
+        @media (width <= 312px) {
+            background-color: #2e2b2b;
+        }
+
+        & > div{
+            justify-content: center;
+            align-items: center;
+            overflow-x: scroll;
+            display: flex;
+
+
+            & > button{
+                &.valid{background-color: rgb(0, 255, 0, .75)}
+                &.wrong{background-color: rgb(255, 0, 0, .75)}
+                @media (width > 312px) {
+                    &.valid, &.wrong{translate: 0 4px}
+                }
+    
+                &:not( :is( .valid, .wrong ) ){
+                    @media (width > 312px) {
+                        box-shadow: 0 0.2em 0 0.05em #dcdcdc;
+                        border-bottom-color: #555;
+                    }
+                    cursor: pointer;
+
+                    &:hover{
+                        opacity: .7;
+                    }
+                } 
+    
+                transition: 
+                    border-bottom-color 200ms ease-in-out,
+                    background-color 200ms ease-in-out,
+                    box-shadow 200ms ease-in-out;
+
+                border: 1px solid #444;
+                justify-content: center;
+                box-sizing: border-box;
+                width: calc(100vw / 10);
+                border-radius: 0.3em;
+                align-items: center;
+                position: relative;
+                background: #333;
+                text-align: center;
+                max-width: 70px;
+                display: flex;
+                color: #eee;
+                height: 70px; 
+
+                @media (width > 312px) {
+                    padding: 5px;
+                    margin: 5px;
+                }
+            }
+        }
+    }
+</style>
