@@ -1,7 +1,7 @@
 import type { Writable } from "svelte/store";
 import { get, writable } from "svelte/store";
 
-class Game{
+export class Game{
     remainingAttempts = 10;
     wrongChars = new Set()
     validChars: Set<Array<string>> = new Set()

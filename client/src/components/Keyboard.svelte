@@ -1,8 +1,11 @@
 <script lang="ts">
     import { currentGame, testCharacter } from '../lib/gameStatus'
+    import WordAttempt from './WordAttempt.svelte';
+
+    let wordGuessModelOpen = false
 
     function handleKeyPress(e){
-        if($currentGame == undefined)
+        if($currentGame == undefined || wordGuessModelOpen)
             return
 
         
@@ -14,7 +17,11 @@
     }
 </script>
 
+
 <svelte:window on:keydown={handleKeyPress}/>
+
+
+<button on:click={() => {wordGuessModelOpen = true}} class="word-guess">Guess Word</button>
 
 <article class="keyboard">
     {#each ["qwertyuiop", "asdfghjkl", "zxcvbnm"] as keyRow}
@@ -31,9 +38,21 @@
     {/each}
 </article>
 
+
+<WordAttempt bind:display={wordGuessModelOpen}/>
+
+
 <style lang="scss">
-    article{
+    @import '../assets/veriables.scss';
+
+    button.word-guess{
+        @include FancyButton(rgb(63, 105, 126));
         margin: auto auto 0 auto;
+    }
+
+
+    article{
+        margin: 0 auto 0 auto;
         height: max-content;
         max-width: 100vw;
         font-size: large;
