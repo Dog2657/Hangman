@@ -56,24 +56,6 @@ async def GET_Catagory_Words(words = Depends(getCatagory)):
     return words
 
 
-@app.get("/random-word", summary="Returns a random word from a random catagory")
-async def GET_Random_Word():
-    catagoryIndex = randrange(len(catagorys))
-    catagoryName = tuple(catagorys.keys())[catagoryIndex]
-    words = catagorys[catagoryName]
-    
-    wordIndex = randrange(len(words))
-    
-    return {"word": words[wordIndex], "catagory": catagoryName}
-
-@app.get('/random-word/{catagory}')
-async def GET_Random_Catagory_Word(words = Depends(getCatagory)):
-    wordIndex = randrange(len(words))
-    return words[wordIndex]
-
-
-
-
 @app.get("/", response_class=FileResponse)
 async def GET_Index():
     return f"{cwd}/client/index.html"
