@@ -1,0 +1,41 @@
+@mixin FancyButton($color){
+    background-color: color-mix(in srgb, $color, transparent 75%);;
+    border: 1px solid $color;
+    font-weight: lighter;
+    border-radius: .25em;
+    width: max-content;
+    padding: 5px 20px;
+    cursor: pointer;
+    color: white;
+    outline: none;
+
+    &:hover, &:focus{
+        background-color: color-mix(in srgb, $color, transparent 50%);;
+    }
+}
+
+@mixin CustomModel($size: 500px, $background: #343040, $backdrop: rgba(0, 0, 0, 0.13)){
+    background-color: $backdrop;
+    place-items: center;
+    max-height: 100vh;
+    position: fixed;
+    height: 100vh;
+    display: grid;
+    width: 100vw;
+    left: 0;
+    top: 0;
+
+    & > *:first-child{
+        box-shadow: 0px 0px 300px 5px $background; 
+        background-color: $background;
+        box-sizing: border-box;
+        max-width: 100vw;
+        padding: 30px;
+        width: $size;
+        border: none;
+
+        @media (width > $size) {
+            border-radius: 10px;
+        }
+    }
+}
