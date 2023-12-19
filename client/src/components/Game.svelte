@@ -4,12 +4,15 @@
     import Keyboard from "./Keyboard.svelte";
     import WordDisplay from './WordDisplay.svelte';
     import Icon from './Icon.svelte';
+    import GameStatus from './GameStatus.svelte';
 </script>
 
 <main transition:fade={($currentGame?.finished)? {duration: 500, delay: 200} : {duration: 200}}>
     <button class="exit" on:click={endGame}>
         <Icon name="home" width={22.5} height={22.5}/>
     </button>
+
+    <GameStatus stage={10 - $currentGame?.remainingAttempts}/>
 
     <WordDisplay/>
     <Keyboard/>
