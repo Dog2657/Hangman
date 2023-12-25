@@ -5,14 +5,14 @@
     import Icon from "./Icon.svelte";
 
     import { words, addWord, deleteWord, addCatagory, deleteCatagory } from "../lib/words"
+    import { toTitleCase } from "../lib/general";
     import { fade } from 'svelte/transition';
     import { get } from "svelte/store";
     import { onMount } from "svelte";
-    import { toTitleCase } from "../lib/general";
 
     let display: number = -1
 
-    let selectedCatagory: string
+    let selectedCatagory: string =""
     $: catagoryWords = new Promise<Array<String>>(async (resolve, reject) => {
         const instace = await $words
         const catagoryWords = await instace[selectedCatagory]
@@ -66,7 +66,7 @@
                     <CatagoryLoader let:categories>
                         <select bind:value={selectedCatagory}>
                             {#each categories as catagory}
-                                <option>{toTitleCase(catagory)}</option>
+                                <option value={catagory}>{toTitleCase(catagory)}</option>
                             {/each}
                         </select>
                         {#each categories as catagory}
@@ -284,10 +284,10 @@
                     width:100%;
 
                     & > tr{
-                        &:hover > td:nth-child(1) > button{ color: red }
+                        &:hover > td:nth-child(1) > button{color: red }
 
                         & > td:nth-child(1){
-                            width: max-content;
+                            width: 20px;
                             padding-right: 2.5px;
                             & > button{
                                 cursor: pointer;

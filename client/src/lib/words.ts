@@ -5,8 +5,8 @@ import { get, writable } from 'svelte/store';
 export const globalWords = new Promise<Array<string>>(async(resolve, reject) => {
     const [result, error] = await request("word-catagorys")
     if(error)
-        return reject(error)
-    resolve(result)
+        console.error(error)
+    resolve(result || [])
 }) 
 
 export async function isCustomCatagory(catagory: string){
@@ -49,9 +49,11 @@ async function getCatagoryWords(name: string, additive: Array<string> = [], subt
 
 
 export const words = writable(new Promise<Record<string, Promise<Array<String>>>>(async (resolve, reject) => {
+    
     const result = await globalWords
+    console.log('hi')
     const data: Record<string, Promise<Array<string>>> = {}
-
+    
     const {additive, subtractive } = getWordAlterations();
 
 
@@ -60,6 +62,8 @@ export const words = writable(new Promise<Record<string, Promise<Array<String>>>
         if(subtractive[name] == undefined || typeof subtractive[name] !== "boolean")
             data[name] = getCatagoryWords(name, additive[name], subtractive[name])
     });
+
+    
 
     resolve(data)
 }));
