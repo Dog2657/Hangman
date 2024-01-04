@@ -69,8 +69,6 @@ class fileManager(StaticFiles):
         file_path = self.get_path(path)
         file_split = file_path.split(".", -1)
 
-        print(file_path)
-
         if(file_split[1] is not None and file_split[1] == "html" ):
             raise HTTPException(404, "Not Found")
 
