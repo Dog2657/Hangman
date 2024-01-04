@@ -1,6 +1,7 @@
 <script lang="ts">
     import WordBankModel from "./WordBankModel.svelte";
     import CatagoryLoader from "./CatagoryLoader.svelte";
+    import InstallButton from "./InstallButton.svelte";
 
     import { generateNumberFromRange, getEventTarget, toTitleCase } from "../lib/general";
     import { currentGame, startGame } from '../lib/gameStatus'
@@ -54,7 +55,7 @@
             </form>
             <form on:submit|preventDefault={playCatagoryWord}>
                 <CatagoryLoader validate={true} let:categories>
-                    <select>
+                    <select aria-label="Select word catagory">
                         {#each categories as catagory}
                             <option value={catagory}>{toTitleCase(catagory)}</option>
                         {/each}
@@ -72,6 +73,7 @@
             <button on:click={openWordBankModel} class="word-bank">Word Bank</button>
         </div>
     </section>
+    <InstallButton/>
     <a class="credit" target="_blank" href="https://github.com/Dog2657/Hangman">Made by Dog2657</a>
 </main>
 
@@ -175,7 +177,7 @@
             text-align: center;
             margin-top: 10px;
             padding: 10px 0;
-            color: grey;
+            color: rgb(255, 255, 255);
             opacity: 0.5;
             width: 100%;
         }

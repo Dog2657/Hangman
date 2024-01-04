@@ -51,7 +51,6 @@ async function getCatagoryWords(name: string, additive: Array<string> = [], subt
 export const words = writable(new Promise<Record<string, Promise<Array<String>>>>(async (resolve, reject) => {
     
     const result = await globalWords
-    console.log('hi')
     const data: Record<string, Promise<Array<string>>> = {}
     
     const {additive, subtractive } = getWordAlterations();
